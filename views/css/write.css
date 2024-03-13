@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -69,17 +71,18 @@
 
 body {
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: var(--bs-gray-200);
+  min-height: 100vh;
+  overflow: scroll;
+  background-color: var(--bs-orange);
   margin: 0;
   padding: 0;
   position: relative;
+  font-family: var(--bs-body-font-family) !important;
 }
 
 .inner {
-  width: 1200px;
-  height: 100vh;
+  width: 1000px;
+  min-height: 100vh;
   padding: 50px;
   background-color: #ffffff;
   position: absolute;
@@ -91,11 +94,27 @@ body {
 form input {
   width: 100%;
   height: 40px;
-  border: 0.5px solid var(--bs-gray-500);
+  border: 0.5px solid var(--bs-gray-400);
   border-radius: 7px;
 }
 
-@media screen and (max-width: 1200px) {
+.note-editing-area, .note-editable {
+  min-height: 500px;
+}
+
+.submit-btn {
+  width: 150px;
+  height: 40px;
+  margin: 0;
+  background-color: var(--bs-orange);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1000px) {
   .inner {
     width: 100vw;
   }
