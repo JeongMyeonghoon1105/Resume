@@ -1,5 +1,4 @@
 const express = require('express')
-const app = express()
 const template = require('./views/js/template.js')
 const session = require('./views/js/session.js')
 const db = require('./views/js/db.js')
@@ -8,13 +7,16 @@ const authCheck = require('./views/js/authCheck.js')
 const url = require('url')
 const bodyParser= require('body-parser')
 
-app.use(bodyParser.urlencoded({extended: true})) 
+const app = express()
 const port = 8001
+
+// Use Body Parser
+app.use(bodyParser.urlencoded({extended: true})) 
 
 // Use 'views' Directory
 app.use(express.static(__dirname + '/views'))
 
-// Session
+// Use Session
 app.use(session)
 
 // Main Page
@@ -22,11 +24,24 @@ app.get('/', (req, res) => {
   db.query(`SELECT id, title, subheading, DATE_FORMAT(created, '%y-%m-%d') AS datetime FROM blog`, (err, topics) => {
     // Declare a Variable for Blog Contentss
     var list = ''
+    var ids = []
     // Throw Error When Error Occurs
     if (err) throw err
-    // Append Blog Contents to the Variable
+    // Save ids in an Array
     topics.forEach((elem) => {
-      list = template.posting(elem.id, elem.title, elem.subheading, elem.datetime) + `<hr class="m-0" />` + list
+      ids.push(elem.id)
+    })
+    // Sort
+    ids.sort(function (a, b) {
+      return b - a;
+    })
+    // Append Blog Contents to the Variable
+    ids.forEach((elem) => {
+      topics.forEach((e) => {
+        if (e.id == elem) {
+          list = template.posting(e.id, e.title, e.subheading, e.datetime) + `<hr class="m-0" />` + list
+        }
+      })
     })
     // Construct a Full HTML Source
     var html = template.head() + template.body(list)
@@ -35,7 +50,7 @@ app.get('/', (req, res) => {
   })
 })
 
-// Auth(Sign In)
+// Use Auth(Sign In)
 app.use('/auth', authRouter)
 
 // Page for Post Writing
@@ -47,7 +62,7 @@ app.get('/write', (req, res) => {
   }
   // Signed In
   else {
-    var render = template.write()
+    var render = template.write('/upload')
     res.send(render)
   }
 })
@@ -83,31 +98,52 @@ app.post('/upload', (req, res) => {
 
 // Post Delete Process
 app.get('/delete', (req, res) => {
-  if (authCheck.isOwner(req, res)) {
+  // Not Signed In
+  if (!authCheck.isOwner(req, res)) {
+    res.redirect('/auth/login')
+    return false
+  }
+  // Signed In
+  else {
     var queryData = url.parse(req.url, true).query
     db.query(`DELETE FROM blog WHERE id='${queryData.id}'`, (err) => {
       res.redirect('/')
     })
-  } else {
-    res.redirect('/')
   }
 })
 
 // Post Update Process
 app.get('/edit', (req, res) => {
-  if (authCheck.isOwner(req, res)) {
+  // Not Signed In
+  if (!authCheck.isOwner(req, res)) {
+    res.redirect('/auth/login')
+    return false
+  }
+  // Signed In
+  else {
     var queryData = url.parse(req.url, true).query
-    db.query(`SELECT * FROM blog WHERE id='${queryData.id}'`, (err, topics) => {
+    var render = template.write(`/edit_process?id=${queryData.id}`)
+    res.send(render)
+  }
+})
+
+// Post Editing Process
+app.post('/edit_process', (req, res) => {
+  // Not Signed In
+  if (!authCheck.isOwner(req, res)) {
+    res.redirect('/auth/login')
+    return false
+  }
+  // Signed In
+  else {
+    var queryData = url.parse(req.url, true).query
+    var title = req.body.title
+    var subheading = req.body.subheading
+    var content = req.body.editordata
+    db.query(`UPDATE blog SET title='${title}', subheading='${subheading}', content='${content}' WHERE id=${queryData.id}`, (err, topics) => {
       if (err) throw err
-      // var title = topics[0].title
-      // var subheading = topics[0].subheading
-      var write = template.write()
-      db.query(`DELETE FROM blog WHERE id='${queryData.id}'`, (err) => {
-        res.send(write)
-      })
+      res.redirect('/')
     })
-  } else {
-    res.redirect('/')
   }
 })
 
