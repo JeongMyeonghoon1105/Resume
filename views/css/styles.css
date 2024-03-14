@@ -1,5 +1,17 @@
 @charset "UTF-8";
 
+/*!
+* Start Bootstrap - Resume v7.0.6 (https://startbootstrap.com/theme/resume)
+* Copyright 2013-2023 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-resume/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap  v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -11005,4 +11017,8 @@ section.resume-section .resume-section-content {
   padding: 10px;
   color: #ffffff;
   border-radius: 7px;
+}
+
+.mb-3 p img {
+  width: 100%;
 }

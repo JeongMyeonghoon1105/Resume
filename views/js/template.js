@@ -192,7 +192,7 @@ const template = {
       <br>
     `
   },
-  write: (path) => {
+  write: (path, title, subheading, content) => {
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -214,9 +214,9 @@ const template = {
           <div class="inner">
             <h1 style="font-weight: bold; font-family: Muli, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji !important;">WRITE</h1><br>
             <form method="post" action="${path}">
-              <input type="text" name="title" placeholder="Title"><br><br>
-              <input type="text" name="subheading" placeholder="Subheading"><br><br>
-              <textarea id="summernote" name="editordata"></textarea>
+              <input type="text" name="title" placeholder="Title" value="${title}"><br><br>
+              <input type="text" name="subheading" placeholder="Subheading" value="${subheading}"><br><br>
+              <textarea id="summernote" name="editordata">${content}</textarea>
               <input class="submit-btn" type="submit" id="submit" value="Submit">
             </form>
             <script>

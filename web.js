@@ -21,7 +21,7 @@ app.use(session)
 
 // Main Page
 app.get('/', (req, res) => {
-  db.query(`SELECT id, title, subheading, DATE_FORMAT(created, '%y-%m-%d') AS datetime FROM blog`, (err, topics) => {
+  db.query(`SELECT id, title, subheading, DATE_FORMAT(created, '%y-%m-%d') AS datetime FROM blog;`, (err, topics) => {
     // Declare a Variable for Blog Contentss
     var list = ''
     var ids = []
@@ -62,7 +62,7 @@ app.get('/write', (req, res) => {
   }
   // Signed In
   else {
-    var render = template.write('/upload')
+    var render = template.write('/upload', '', '', '')
     res.send(render)
   }
 })
@@ -70,7 +70,7 @@ app.get('/write', (req, res) => {
 // Page for Each Post
 app.get('/post', (req, res) => {
   var queryData = url.parse(req.url, true).query
-  db.query(`SELECT id, title, content FROM blog WHERE id=${queryData.id}`, (err, topics) => {
+  db.query(`SELECT id, title, content FROM blog WHERE id=${queryData.id};`, (err, topics) => {
     if (err) throw err
     var render = template.post(topics[0].title, topics[0].content)
     res.send(render)
@@ -89,7 +89,7 @@ app.post('/upload', (req, res) => {
     var title = req.body.title
     var subheading = req.body.subheading
     var content = req.body.editordata
-    db.query(`INSERT INTO blog(title, subheading, content, created) VALUES (?, ?, ?, DATE_FORMAT(now(), '%Y-%m-%d'))`, [title, subheading, content], (err, topics) => {
+    db.query(`INSERT INTO blog(title, subheading, content, created) VALUES (?, ?, ?, DATE_FORMAT(now(), '%Y-%m-%d'));`, [title, subheading, content], (err, topics) => {
       if (err) throw err
       res.redirect('/')
     })
@@ -106,7 +106,8 @@ app.get('/delete', (req, res) => {
   // Signed In
   else {
     var queryData = url.parse(req.url, true).query
-    db.query(`DELETE FROM blog WHERE id='${queryData.id}'`, (err) => {
+    db.query(`DELETE FROM blog WHERE id=${queryData.id};`, (err) => {
+      if (err) throw err
       res.redirect('/')
     })
   }
@@ -122,13 +123,19 @@ app.get('/edit', (req, res) => {
   // Signed In
   else {
     var queryData = url.parse(req.url, true).query
-    var render = template.write(`/edit_process?id=${queryData.id}`)
-    res.send(render)
+    db.query(`SET SQL_SAFE_UPDATES = 0;`, (error) =>  {
+      if (error) throw error
+      db.query(`SELECT title, subheading, content FROM blog WHERE id=${queryData.id};`, (err, topics) => {
+        if (err) throw err
+        var render = template.write(`/update?id=${queryData.id}`, `${topics[0].title}`, `${topics[0].subheading}`, `${topics[0].content}`)
+        res.send(render)
+      })
+    })
   }
 })
 
 // Post Editing Process
-app.post('/edit_process', (req, res) => {
+app.post('/update', (req, res) => {
   // Not Signed In
   if (!authCheck.isOwner(req, res)) {
     res.redirect('/auth/login')
@@ -140,9 +147,9 @@ app.post('/edit_process', (req, res) => {
     var title = req.body.title
     var subheading = req.body.subheading
     var content = req.body.editordata
-    db.query(`UPDATE blog SET title='${title}', subheading='${subheading}', content='${content}' WHERE id=${queryData.id}`, (err, topics) => {
+    db.query(`UPDATE blog SET title=?, subheading=?, content=? WHERE id=?;`, [title, subheading, content, queryData.id], (err, topics) => {
       if (err) throw err
-      res.redirect('/')
+      res.redirect(`/post?id=${queryData.id}`)
     })
   }
 })
