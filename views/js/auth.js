@@ -2,6 +2,7 @@ const express = require('express')
 const template = require('./template.js')
 const authCheck = require('./authCheck.js')
 const db = require('./db.js')
+const url = require('url')
 const router = express.Router()
 
 // Sign In
@@ -9,7 +10,14 @@ router.get('/login', (req, res) => {
   if (authCheck.isOwner(req, res)) {
     res.redirect('/')
   } else {
-    var html = template.signin()
+    var queryData = url.parse(req.url, true).query
+    if (queryData.path == 'write') {
+      var html = template.signin('?path=write')
+    } else if (queryData.path == 'edit') {
+      var html = template.signin(`?path=edit&id=${queryData.id}`)
+    } else {
+      var html = template.signin('')
+    }
     res.send(html)
   }
 })
@@ -26,8 +34,15 @@ router.post('/login_process', (req, res) => {
       if (results.length > 0) {
         req.session.is_logined = true
         req.session.nickname = username
+        var queryData = url.parse(req.url, true).query
         req.session.save(() => {
-          res.redirect(`/`)
+          if (queryData.path == 'write') {
+            res.redirect(`/write`)
+          } else if (queryData.path == 'edit') {
+            res.redirect(`/edit?id=${queryData.id}`)
+          } else {
+            res.redirect(`/`)
+          }
         })
       } else {              
         res.send(

@@ -57,7 +57,7 @@ app.use('/auth', authRouter)
 app.get('/write', (req, res) => {
   // Not Signed In
   if (!authCheck.isOwner(req, res)) {
-    res.redirect('/auth/login')
+    res.redirect('/auth/login?path=write')
     return false
   }
   // Signed In
@@ -117,7 +117,8 @@ app.get('/delete', (req, res) => {
 app.get('/edit', (req, res) => {
   // Not Signed In
   if (!authCheck.isOwner(req, res)) {
-    res.redirect('/auth/login')
+    var queryData = url.parse(req.url, true).query
+    res.redirect(`/auth/login?path=edit&id=${queryData.id}`)
     return false
   }
   // Signed In

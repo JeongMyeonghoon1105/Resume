@@ -276,11 +276,15 @@ const template = {
               </div>
             </section>
           </div>
+          <!-- Bootstrap core JS-->
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+          <!-- Core theme JS-->
+          <script src="js/scripts.js"></script>
         </body>
       </html>
     `
   },
-  signin: () => {
+  signin: (query) => {
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -303,7 +307,7 @@ const template = {
           <div class="content-box">
             <div class="inner-box">
               <h2>Sign In</h2>
-              <form action="/auth/login_process" method="post">
+              <form action="/auth/login_process${query}" method="post">
               <p><input class="signin" type="text" name="username" placeholder="ID"></p>
               <p><input class="signin" type="password" name="pwd" placeholder="PW"></p>
               <p><input class="submit-btn" type="submit" value="Sign In"></p>
