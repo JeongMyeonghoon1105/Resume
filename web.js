@@ -155,7 +155,7 @@ app.post('/update', (req, res) => {
   }
 })
 
-// Listen
+// Open http Server
 app.listen(port, () => {
   console.log(`App running on port ${port}`)
 })

@@ -28,7 +28,7 @@ const template = {
               <a class="navbar-brand js-scroll-trigger" href="#page-top">
                 <span class="d-block d-lg-none">Jeong Myeonghoon</span>
                 <span class="d-none d-lg-block">
-                  <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://avatars.githubusercontent.com/u/89135740?v=4" alt="..." />
+                  <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="https://github.com/JeongMyeonghoon1105/Images/blob/main/Profile2.jpeg?raw=true" alt="..." />
                 </span>
               </a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
